@@ -1,5 +1,6 @@
 import express from 'express';
-import cors from 'cors';
+
+import cors, { CorsOptions } from "cors";
 import todosRouter from './routes/todo';
 import swaggerUi from 'swagger-ui-express';
 import { swaggerDoc } from './swagger';

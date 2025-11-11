@@ -4,12 +4,16 @@ dotenv.config();
 import app from './server';
 import { connectDB } from './config/db';
 
+import { env } from './config/env';
+
+console.log(env.MONGO_URI);
+
 const PORT = process.env.PORT || 4000;
 
 (async () => {
   try {
     await connectDB();
-    app.listen(PORT, () => console.log(`Server running on http://localhost:${PORT}`));
+    app.listen(PORT, () => console.log(`🚀 Server running on port ${PORT} (${process.env.NODE_ENV})`));
   } catch (err) {
     console.error('Failed to start server', err);
     process.exit(1);
