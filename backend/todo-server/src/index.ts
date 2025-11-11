@@ -4,9 +4,6 @@ dotenv.config();
 import app from './server';
 import { connectDB } from './config/db';
 
-import { env } from './config/env';
-
-console.log(env.MONGO_URI);
 
 const PORT = process.env.PORT || 4000;
 

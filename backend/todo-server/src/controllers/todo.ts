@@ -10,7 +10,7 @@ export const createTodo = async (req: Request, res: Response) => {
   }
 };
 
-export const getTodos = async (_req: Request, res: Response) => {
+export const getTodos = async (req: Request, res: Response) => {
   const todos = await Todo.find().sort({ createdAt: -1 });
   res.json(todos);
 };
