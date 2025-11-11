@@ -1,48 +1,77 @@
-// import { useEffect, useRef, useState } from 'react';
-// import type { Todo } from '../types';
+import { useState, useEffect, useCallback } from 'react';
+import type { Todo } from '../types';
 
-// export interface ReminderNotification {
-//   todo: Todo;
-//   time: number; // timestamp
-// }
+export interface ReminderNotification {
+  todo: Todo;
+  time: number; // timestamp in ms
+}
 
-// export function useReminderNotifications() {
-//   const [upcoming, setUpcoming] = useState<ReminderNotification[]>([]);
-//   const [active, setActive] = useState<ReminderNotification | null>(null);
-//   const timers = useRef<NodeJS.Timeout[]>([]);
+export function useReminderNotifications() {
+  const [reminders, setReminders] = useState<ReminderNotification[]>([]);
+  const [active, setActive] = useState<ReminderNotification | null>(null);
 
-//   // 🧹 Cleanup timers on unmount
-//   useEffect(() => {
-//     return () => timers.current.forEach((t) => clearTimeout(t));
-//   }, []);
+  // Schedule a new reminder
+  const scheduleReminder = (todo: Todo) => {
+    if (!todo.reminder) return;
+    const time = new Date(todo.reminder).getTime();
+    if (time <= Date.now()) return; // skip past reminders
+    setReminders((prev) => [...prev, { todo, time }]);
+  };
 
-//   // 🕐 Schedule new reminder
-//   const scheduleReminder = (todo: Todo) => {
-//     if (!todo.reminder) return;
+  // Reschedule multiple todos
+  const rescheduleTodos = (todos: Todo[]) => {
+    const newReminders = todos
+      .filter((t) => t.reminder)
+      .map((t) => ({ todo: t, time: new Date(t.reminder!).getTime() }))
+      .filter((r) => r.time > Date.now());
+    setReminders(newReminders);
+  };
 
-//     const reminderTime = new Date(todo.reminder).getTime();
-//     const now = Date.now();
-//     const delay = reminderTime - now;
+  // Dismiss reminder by id (optional)
+  const dismissReminder = (id?: string) => {
+    if (id) {
+      setReminders((prev) => prev.filter((r) => r.todo._id !== id));
+      if (active?.todo._id === id) setActive(null);
+    } else {
+      setActive(null);
+    }
+  };
 
-//     if (delay <= 0) return; // skip past reminders
+  // Snooze reminder by id for X minutes
+  const snoozeReminder = (id: string, minutes: number) => {
+    setReminders((prev) => {
+      const r = prev.find((r) => r.todo._id === id);
+      if (!r) return prev;
+      const newTime = Date.now() + minutes * 60_000;
+      return [...prev.filter((x) => x.todo._id !== id), { todo: r.todo, time: newTime }];
+    });
+    if (active?.todo._id === id) setActive(null);
+  };
 
-//     const timer = setTimeout(() => {
-//       setActive({ todo, time: reminderTime });
-//     }, delay);
+  // Check for reminders every second
+  useEffect(() => {
+    const interval = setInterval(() => {
+      const now = Date.now();
+      const next = reminders.find((r) => r.time <= now);
+      if (next) setActive(next);
+    }, 1000);
+    return () => clearInterval(interval);
+  }, [reminders]);
 
-//     timers.current.push(timer);
-//     setUpcoming((prev) => [...prev, { todo, time: reminderTime }]);
-//   };
+  // Get upcoming reminders in next X ms (default 1 hour)
+  const getUpcomingNextHour = useCallback(() => {
+    const now = Date.now();
+    const oneHour = 60 * 60 * 1000;
+    return reminders.filter((r) => r.time > now && r.time <= now + oneHour);
+  }, [reminders]);
 
-//   const dismissReminder = () => setActive(null);
-
-//   const snoozeReminder = (minutes: number) => {
-//     if (!active) return;
-//     const snoozeTime = Date.now() + minutes * 60 * 1000;
-//     const timer = setTimeout(() => setActive(active), minutes * 60 * 1000);
-//     timers.current.push(timer);
-//     setActive(null);
-//   };
-
-//   return { scheduleReminder, active, dismissReminder, snoozeReminder };
-// }
+  return {
+    reminders,
+    active,
+    scheduleReminder,
+    rescheduleTodos,
+    dismissReminder,
+    snoozeReminder,
+    getUpcomingNextHour,
+  };
+}

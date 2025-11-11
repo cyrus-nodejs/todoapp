@@ -1,7 +1,10 @@
 import axios from 'axios';
 import type { Todo} from '../types';
-
-const API = axios.create({ baseURL: import.meta.env.VITE_API_URL || 'http://localhost:4000/api' });
+import { env } from '../config/env';
+const API = axios.create({ baseURL: env.API_BASE_URL, timeout: 10000,
+  headers: {
+    'Content-Type': 'application/json',
+  },  });
 
 
 // ✅ Get all todos
