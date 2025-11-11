@@ -54,7 +54,7 @@ A fullstack **Todo app** with reminders, deadlines, categories, and color-coded 
 
 ```bash
 git clone https://github.com/yourusername/todo-app.git
-cd todo
+cd todoapp
 ```
 
 ---
