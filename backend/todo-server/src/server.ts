@@ -1,13 +1,20 @@
 import express from 'express';
 
-import cors, { CorsOptions } from "cors";
+import cors  from "cors";
 import todosRouter from './routes/todo';
 import swaggerUi from 'swagger-ui-express';
 import { swaggerDoc } from './swagger';
 
+console.log(process.env.CLIENT_URL)
+
 const app = express();
 
-app.use(cors());
+const corsOptions = {
+  origin: process.env.CLIENT_URL, // Allow only the client URL
+  optionsSuccessStatus: 200,
+};
+
+app.use(cors(corsOptions));
 app.use(express.json());
 
 app.use('/api/todos', todosRouter);
