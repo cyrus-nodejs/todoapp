@@ -70,7 +70,7 @@ export default function TodoForm({ onSubmit, editingTodo = null, onCancel }: Pro
       {/* 🏷 Title */}
       <div>
         <label className="block font-medium mb-1">
-          Title <span className="text-sm text-gray-500">({titleCharCount}/100 chars)</span>
+          Title <span className="text-sm text-gray-500">({titleCharCount}/100 words)</span>
         </label>
         <input
           name="title"
@@ -87,7 +87,7 @@ export default function TodoForm({ onSubmit, editingTodo = null, onCancel }: Pro
       {/* 📝 Description */}
       <div>
         <label className="block font-medium mb-1">
-          Description <span className="text-sm text-gray-500">({descCharCount}/500 chars)</span>
+          Description <span className="text-sm text-gray-500">({descCharCount}/500 words)</span>
         </label>
         <textarea
           name="description"
