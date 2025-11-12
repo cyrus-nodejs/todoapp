@@ -20,6 +20,6 @@ app.use(express.json());
 app.use('/api/todos', todosRouter);
 app.use('/docs', swaggerUi.serve, swaggerUi.setup(swaggerDoc));
 
-app.get('/', (_req, res) => res.send('Todo API'));
+app.get('/', (_req, res) => res.send('Welcome Todo API Service!'));
 
 export default app;
