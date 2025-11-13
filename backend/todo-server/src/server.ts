@@ -1,6 +1,6 @@
 import express from 'express';
 
-import cors  from "cors";
+import cors, {CorsOptions} from "cors";
 import todosRouter from './routes/todo';
 import swaggerUi from 'swagger-ui-express';
 import { swaggerDoc } from './swagger';
@@ -9,9 +9,29 @@ console.log(process.env.CLIENT_URL)
 
 const app = express();
 
-const corsOptions = {
-  origin: process.env.CLIENT_URL, // Allow only the client URL
+// const corsOptions = {
+//   origin: process.env.CLIENT_URL, // Allow only the client URL
+//   optionsSuccessStatus: 200,
+// };
+
+// Allow multiple origins
+const allowedOrigins = [
+  process.env.CLIENT_URL,
+  process.env.SERVICE_WORKER,
+  process.env.SERVER_URL,
+].filter(Boolean); // remove undefined entries
+
+
+const corsOptions: cors.CorsOptions = {
+  origin: (origin, callback) => {
+    if (!origin || allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      callback(new Error(`Not allowed by CORS: ${origin}`));
+    }
+  },
   optionsSuccessStatus: 200,
+  credentials: true, // allow cookies or authorization headers if needed
 };
 
 app.use(cors(corsOptions));

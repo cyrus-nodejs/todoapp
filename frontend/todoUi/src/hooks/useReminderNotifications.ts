@@ -27,7 +27,7 @@ export function useReminderNotifications() {
     setReminders(newReminders);
   };
 
-  // Dismiss reminder by id (optional)
+  // Dismiss reminder by id 
   const dismissReminder = (id?: string) => {
     if (id) {
       setReminders((prev) => prev.filter((r) => r.todo._id !== id));

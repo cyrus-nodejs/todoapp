@@ -55,7 +55,18 @@ export default function Home() {
   // View details
   const handleViewDetails = (id: string) => {
     const todo = todos.find((t) => t._id === id);
-    if (todo) alert(`📋 ${todo.title}\n\n${todo.description}`);
+   if (todo) {
+  let deadlineText = 'No deadline';
+  if (todo.deadline) {
+    const date = new Date(todo.deadline);
+    deadlineText = date.toLocaleString(undefined, {
+      dateStyle: 'medium',
+      timeStyle: 'short',
+    });
+  }
+
+  alert(`📋 ${todo.title}\n\n 📑 ${todo.description}\n\n⏱️ ${deadlineText}`);
+}
   };
 
   // Upcoming reminders
